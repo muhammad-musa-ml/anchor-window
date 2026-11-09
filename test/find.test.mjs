@@ -52,7 +52,7 @@ test('case and the amount of white space do not matter', () => {
   assert.deepEqual(find(index, 'REFRESH token').map((m) => m.block), [0, 1]);
 });
 
-test('occurrences do not overlap, as in the browser', () => {
+test('occurrences do not overlap', () => {
   const index = buildTextIndex(['aaaa', 'aaa']);
   assert.deepEqual(find(index, 'aa'), [{ block: 0, count: 2 }, { block: 1, count: 1 }]);
 });

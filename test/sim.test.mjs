@@ -33,15 +33,21 @@ test('reading upwards without it moves the text by whole blocks', () => {
 
 test('a pinned deep link lands exactly where it was asked to', () => {
   for (const seed of SEEDS) {
-    const run = deepLink({ seed, n: 2000, pinned: true });
+    const run = deepLink({ seed, n: 2000, jump: 'pinned' });
     assert.ok(run.error < 1e-6, `seed ${seed}: ${run.error}px`);
     assert.equal(run.onScreen, true);
   }
 });
 
-test('an unpinned jump to the estimated offset ends up elsewhere', () => {
-  const off = SEEDS.filter((seed) => deepLink({ seed, n: 2000, pinned: false }).error > 1);
-  assert.ok(off.length >= SEEDS.length - 1, `only ${off.length} of ${SEEDS.length} were off`);
+test('one jump to the estimated offset, with anchoring off, ends up elsewhere', () => {
+  for (const seed of SEEDS) {
+    const run = deepLink({ seed, n: 2000, jump: 'estimate' });
+    assert.ok(run.error > 1, `seed ${seed}: only ${run.error}px off`);
+  }
+});
+
+test('deepLink refuses a jump kind it does not know', () => {
+  assert.throws(() => deepLink({ seed: 1, n: 2000, jump: true }), /jump is true/);
 });
 
 test('the prefix loop used in the benchmark agrees with the Fenwick layout', () => {

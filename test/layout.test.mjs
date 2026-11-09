@@ -77,6 +77,30 @@ test('setHeight marks a block as measured and leaves the others alone', () => {
   assert.equal(layout.offsetOf(2), 35);
 });
 
+test('an index that is not a block is refused instead of looping or corrupting the tree', () => {
+  const layout = new Layout([10, 20, 30]);
+  assert.equal(layout.offsetOf(3), 60);
+  for (const bad of [0.5, -1, 4, NaN, null, undefined, '1']) {
+    assert.throws(() => layout.offsetOf(bad), RangeError, `offsetOf(${bad})`);
+  }
+  for (const bad of [3, -1, 0.5, NaN, null, undefined]) {
+    assert.throws(() => layout.setHeight(bad, 10), RangeError, `setHeight(${bad})`);
+  }
+  assert.equal(layout.total(), 60);
+  assert.equal(layout.isMeasured(0), false);
+});
+
+test('a height that is not a size is refused and changes nothing', () => {
+  const layout = new Layout([10, 20, 30]);
+  for (const bad of [NaN, -1, Infinity, undefined]) {
+    assert.throws(() => layout.setHeight(1, bad), RangeError, `setHeight(1, ${bad})`);
+  }
+  assert.equal(layout.total(), 60);
+  assert.equal(layout.isMeasured(1), false);
+  assert.equal(layout.setHeight(1, 0), -20);
+  assert.equal(layout.total(), 40);
+});
+
 test('a page with one block, and an empty page', () => {
   const one = new Layout([42]);
   assert.equal(one.total(), 42);

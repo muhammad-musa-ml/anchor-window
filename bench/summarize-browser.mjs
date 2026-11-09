@@ -30,7 +30,7 @@ for (const [mode, label] of modes) {
 }
 
 const lines = [
-  `${first.browser}, ${first.sessions} sessions of ${first.steps} wheel steps on a page of ${first.blocks} blocks in a ${first.containerHeight} px container. Cells are median (min to max) over the sessions.`,
+  `${first.browser}, ${first.sessions} sessions of ${first.steps} scroll steps (scrollTop set directly, not wheel events) on a page of ${first.blocks} blocks in a ${first.containerHeight} px container, ${first.mountedBlocks} blocks mounted after the last session. Cells are median (min to max) over the sessions.`,
   '',
   '| mode | largest jump, px | steps with a jump over 1 px, of 100 | steps where the block left the window | deep link: distance from the intended place, px | deep links with the heading off screen, of 10 |',
   '| --- | --- | --- | --- | --- | --- |',

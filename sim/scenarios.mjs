@@ -13,11 +13,12 @@ function newPage(doc, options) {
 }
 
 /**
- * Read upwards from the middle of the page, one wheel step per frame. After
- * each step the browser measures the blocks that just came into the window.
- * The text the user was looking at should move by exactly the wheel step. A
- * jump is how far the block that was at the top of the viewport before the
- * step ends up from where that rule puts it.
+ * Read upwards from the middle of the page, one scroll step per frame (a
+ * scrollTop set directly, 40 to 300 px). After each step the browser measures
+ * the blocks that just came into the window. The text the user was looking at
+ * should move by exactly the scroll step. A jump is how far the block that was
+ * at the top of the viewport before the step ends up from where that rule
+ * puts it.
  */
 export function readUpwards({ seed, n = 10000, frames = 300, anchoring }) {
   const doc = makeDoc(seed, n);
@@ -46,16 +47,18 @@ export function readUpwards({ seed, n = 10000, frames = 300, anchoring }) {
 /**
  * Jump to a random heading, 72 px below the top of the viewport. The error is
  * how far the heading ends up from that place once the browser has measured
- * the blocks around it.
+ * the blocks around it. `jump` is 'pinned' (scrollToId, anchoring on) or
+ * 'estimate' (one jump to the estimated offset, anchoring off).
  */
-export function deepLink({ seed, n = 10000, pinned }) {
+export function deepLink({ seed, n = 10000, jump }) {
+  if (jump !== 'pinned' && jump !== 'estimate') throw new Error(`jump is ${jump}`);
   const doc = makeDoc(seed, n);
   const margin = 72;
   const next = rng(seed * 104729 + 3);
   let target = intBetween(next, 50, n - 50);
   while (!doc.ids[target]) target++;
-  const page = newPage(doc, { anchoring: pinned });
-  if (pinned) page.scrollToId(doc.ids[target], margin);
+  const page = newPage(doc, { anchoring: jump === 'pinned' });
+  if (jump === 'pinned') page.scrollToId(doc.ids[target], margin);
   else page.scrollTo(page.layout.offsetOf(target) - margin);
   settle(page, doc.heights);
   const error = screenY(page, target) - margin;
@@ -63,7 +66,11 @@ export function deepLink({ seed, n = 10000, pinned }) {
   return { error: Math.abs(error), onScreen: y >= 0 && y < VIEWPORT };
 }
 
-/** How much of a page-wide search the browser's own find could see. */
+/**
+ * What share of a page-wide search falls inside the mounted blocks, which is
+ * all the browser's own find can see. One page (the seed), `samples` random
+ * scroll positions, every query at every position.
+ */
 export function findShare({ seed, n = 10000, queries, samples = 200 }) {
   const doc = makeDoc(seed, n);
   const index = buildTextIndex(doc.texts);

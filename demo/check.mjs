@@ -1,7 +1,11 @@
 // Two checks of the demo in headless Chrome: a link with a heading id in the
 // address lands on that heading, and page-wide find jumps to a match that was
-// not mounted. Exits 1 on a failure. Needs `npm run build:demo` first.
+// not mounted. It also counts what the browser's own find would see in the
+// mounted text. Writes results/check.md; exits 1 on a failure. Needs
+// `npm run build:demo` first.
 import assert from 'node:assert/strict';
+import { writeFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 import puppeteer from 'puppeteer-core';
 
@@ -57,6 +61,23 @@ try {
   }, block);
   assert.ok(where !== null && Math.abs(where) < 1, `block ${block} is ${where} px from the top`);
   console.log(`find: ${found.status}; block ${block} is ${where} px from the top, ${found.mounted} blocks mounted`);
+
+  // What the browser's own find can see is the text of the mounted blocks.
+  const inDom = await page.evaluate(
+    () => document.body.innerText.toLowerCase().replace(/\s+/g, ' ').split('refresh token').length - 1
+  );
+  const everywhere = totalCount(matches);
+  assert.ok(inDom * 20 < everywhere, `${inDom} of ${everywhere} matches are in the document text`);
+  console.log(`"refresh token" in document.body.innerText: ${inDom} of ${everywhere}`);
+
+  const report = [
+    `Headless Chrome, demo page of ${doc.texts.length} blocks, engine mode (npm run check:demo).`,
+    '',
+    `- Link to #${doc.ids[target]}: the heading is ${offset} px from the top of the page.`,
+    `- Page-wide find for "refresh token": ${found.status}; pressing next 100 times (one block per press) lands on block ${block}, ${where} px from the top, with ${found.mounted} blocks mounted.`,
+    `- "refresh token" in document.body.innerText, which is what the browser's find sees: ${inDom} of the ${everywhere} matches in the page.`,
+  ];
+  writeFileSync(fileURLToPath(new URL('../results/check.md', import.meta.url)), `${report.join('\n')}\n`);
 } catch (error) {
   console.error(`FAIL: ${error.message}`);
   failed = true;

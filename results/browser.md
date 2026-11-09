@@ -1,4 +1,4 @@
-Chrome/156.0.8078.80, 10 sessions of 100 wheel steps on a page of 10000 blocks in a 700 px container. Cells are median (min to max) over the sessions.
+Chrome/156.0.8078.80, 10 sessions of 100 scroll steps (scrollTop set directly, not wheel events) on a page of 10000 blocks in a 700 px container, 10 blocks mounted after the last session. Cells are median (min to max) over the sessions.
 
 | mode | largest jump, px | steps with a jump over 1 px, of 100 | steps where the block left the window | deep link: distance from the intended place, px | deep links with the heading off screen, of 10 |
 | --- | --- | --- | --- | --- | --- |

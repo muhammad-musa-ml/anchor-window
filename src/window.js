@@ -6,7 +6,6 @@
  * blocks on each side. `end` is exclusive.
  */
 export function visibleRange(layout, scrollTop, viewport, overscan = 3) {
-  if (layout.n === 0) return { start: 0, end: 0 };
   const first = layout.indexAt(scrollTop);
   const last = layout.indexAt(scrollTop + viewport);
   return {

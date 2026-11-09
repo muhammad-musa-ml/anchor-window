@@ -41,9 +41,9 @@ function runReadUpwards() {
 
 function runDeepLink() {
   const rows = {};
-  for (const pinned of [false, true]) {
-    const runs = seeds().map((seed) => deepLink({ seed, n: BLOCKS, pinned }));
-    rows[pinned ? 'with' : 'without'] = {
+  for (const jump of ['estimate', 'pinned']) {
+    const runs = seeds().map((seed) => deepLink({ seed, n: BLOCKS, jump }));
+    rows[jump === 'pinned' ? 'with' : 'without'] = {
       error: spread(runs.map((r) => r.error)),
       offTarget: runs.filter((r) => r.error > 1).length,
       offScreen: runs.filter((r) => !r.onScreen).length,
@@ -55,7 +55,7 @@ function runDeepLink() {
 function runFind() {
   const queries = ['token', 'webhook', 'refresh token'];
   const out = findShare({ seed: 1, n: BLOCKS, queries, samples: SESSIONS });
-  return { whole: out.whole, meanMounted: out.meanMounted, share: spread(out.shares) };
+  return { whole: out.whole, queries: queries.length, meanMounted: out.meanMounted, share: spread(out.shares) };
 }
 
 function timeLayouts() {
@@ -114,19 +114,19 @@ const t = results.layoutTime;
 const lines = [
   `Page of ${BLOCKS} blocks, ${SESSIONS} seeded sessions. Each cell is median (min to max).`,
   '',
-  '| Reading upwards, 300 wheel steps | no correction | with anchoring |',
+  '| Reading upwards, 300 scroll steps (scrollTop set directly) | no correction | with anchoring |',
   '| --- | --- | --- |',
   `| largest single jump, px | ${cell(r.without.maxJump)} | ${cell(r.with.maxJump)} |`,
   `| total jump over the session, px | ${cell(r.without.totalJump, 0)} | ${cell(r.with.totalJump)} |`,
   `| steps with a jump over 1 px, of 300 | ${cell(r.without.framesWithJump, 0)} | ${cell(r.with.framesWithJump, 0)} |`,
   '',
-  '| Deep link to a random heading, 72 px below the top | no pin | pinned |',
+  '| Deep link to a random heading, 72 px below the top | one jump, anchoring off | pinned |',
   '| --- | --- | --- |',
   `| distance from the intended place, px | ${cell(d.without.error)} | ${cell(d.with.error)} |`,
   `| sessions more than 1 px off, of ${SESSIONS} | ${d.without.offTarget} | ${d.with.offTarget} |`,
   `| sessions with the heading off screen, of ${SESSIONS} | ${d.without.offScreen} | ${d.with.offScreen} |`,
   '',
-  `Find: the browser's own find, at a random scroll position with about ${fmt(f.meanMounted, 1)} blocks mounted, sees a median ${fmt(f.share.median * 100, 2)}% (${fmt(f.share.min * 100, 2)}% to ${fmt(f.share.max * 100, 2)}%) of the matches the page-wide index finds. Page-wide counts: ${Object.entries(f.whole).map(([q, c]) => `"${q}" ${c}`).join(', ')}.`,
+  `Find: share of the page-wide matches that fall inside the mounted blocks, which is all the browser's own find can see. One page (seed 1), ${f.queries} queries at ${SESSIONS} random scroll positions, about ${fmt(f.meanMounted, 1)} blocks mounted: median ${fmt(f.share.median * 100, 2)}% (${fmt(f.share.min * 100, 2)}% to ${fmt(f.share.max * 100, 2)}%). Page-wide counts: ${Object.entries(f.whole).map(([q, c]) => `"${q}" ${c}`).join(', ')}.`,
   '',
   `| Layout cost, ${t.operations} operations on ${t.blocks} blocks, ${t.runs} runs, ms | prefix loop | Fenwick tree |`,
   '| --- | --- | --- |',

@@ -55,14 +55,34 @@ test('a margin leaves room for a sticky header and is kept after measuring', () 
 test('the echo of our own scroll keeps the pin; a real scroll drops it', () => {
   const p = page();
   const { scrollTop } = p.scrollToId('h-60', 72);
+  const pinned = structuredClone(p.anchor);
+  assert.deepEqual(pinned, { index: 60, offset: -72 });
   p.scrollTo(scrollTop + 0.4);
-  assert.equal(p.pinned, true);
+  assert.deepEqual(p.anchor, pinned);
+  assert.equal(p.scrollTop, scrollTop);
   p.scrollTo(scrollTop + 250);
-  assert.equal(p.pinned, false);
-  const before = p.anchor;
+  assert.notDeepEqual(p.anchor, pinned);
+  assert.deepEqual(p.anchor, { index: 61, offset: 78 });
   p.measure([[59, 500]]);
-  assert.deepEqual(p.anchor, before);
   assert.equal(p.scrollTop, 6000 - 72 + 250 + 400);
+});
+
+test('a pinned target stays at its place when the block above it is measured again', () => {
+  const p = page();
+  p.scrollToId('h-60', 72);
+  p.measure([[59, 500]]);
+  assert.equal(screenY(p, 60), 72);
+  p.measure([[59, 300]]);
+  assert.equal(screenY(p, 60), 72);
+});
+
+test('scrollToBlock refuses anything that is not a block index and moves nothing', () => {
+  const p = page();
+  p.scrollTo(500);
+  for (const bad of [null, undefined, 0.5, NaN, '3', -1, 200, Infinity]) {
+    assert.equal(p.scrollToBlock(bad), null, String(bad));
+  }
+  assert.equal(p.scrollTop, 500);
 });
 
 test('a target near the end of the page is clamped and still reachable', () => {

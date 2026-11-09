@@ -2,7 +2,7 @@
   "name": "anchor-window",
   "version": "0.1.0",
   "private": true,
-  "description": "Windowed rendering for long documentation pages that keeps deep links, reading position and find working.",
+  "description": "Windowed rendering for long documentation pages: reading position, deep links and a page-wide find.",
   "license": "MIT",
   "type": "module",
   "engines": {

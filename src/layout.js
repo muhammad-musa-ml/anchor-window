@@ -29,6 +29,12 @@ export class Layout {
 
   /** Record a measured height. Returns how much the height changed. */
   setHeight(i, value) {
+    if (!Number.isInteger(i) || i < 0 || i >= this.n) {
+      throw new RangeError(`setHeight: block ${i} is not in 0..${this.n - 1}`);
+    }
+    if (!Number.isFinite(value) || value < 0) {
+      throw new RangeError(`setHeight: ${value} is not a height`);
+    }
     const delta = value - this.h[i];
     this.h[i] = value;
     this.measured[i] = 1;
@@ -40,6 +46,9 @@ export class Layout {
 
   /** Where block i starts: the sum of the heights of blocks 0 .. i-1. */
   offsetOf(i) {
+    if (!Number.isInteger(i) || i < 0 || i > this.n) {
+      throw new RangeError(`offsetOf: ${i} is not in 0..${this.n}`);
+    }
     let sum = 0;
     for (let k = i; k > 0; k -= k & -k) sum += this.tree[k];
     return sum;

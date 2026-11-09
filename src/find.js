@@ -1,5 +1,5 @@
 // The browser's find only sees text that is mounted. With a window of about
-// twenty blocks out of thousands, most matches are invisible to it. This
+// a dozen blocks out of thousands, most matches are invisible to it. This
 // index holds the plain text of every block, so a search covers the whole
 // page and the result can be turned into a jump.
 

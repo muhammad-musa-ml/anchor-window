@@ -1,5 +1,5 @@
-// mulberry32: a small seeded generator, so every test and every measured run
-// can be repeated exactly.
+// mulberry32: a small seeded generator, so a seed gives the same page and the
+// same scroll steps every time. Only the timings differ between runs.
 export function rng(seed) {
   let a = seed >>> 0;
   return function next() {

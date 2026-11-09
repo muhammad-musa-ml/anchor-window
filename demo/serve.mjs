@@ -1,6 +1,6 @@
 // A static server for the demo, on localhost only. A POST to /save/<name>
-// writes the body to results/browser/<name>.json, which is how the demo
-// records its own measurements.
+// writes the body to results/browser/<name>.json. demo/measure.mjs writes its
+// results itself and does not use it.
 import { createServer } from 'node:http';
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { extname, join, resolve } from 'node:path';

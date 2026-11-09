@@ -81,6 +81,50 @@ test('an anchor that is no longer mounted is replaced by the block at the top', 
   assert.equal(page.anchor.index, 150);
 });
 
+test('reading up from a block that was never measured takes the estimate at the new top', () => {
+  const layout = new Layout(Array.from({ length: 30 }, () => 100));
+  const page = new PageWindow({ layout, viewport: 500 });
+  page.scrollTo(1000);
+  page.scrollTo(900);
+  assert.deepEqual(page.anchor, { index: 9, offset: 0 });
+});
+
+test('scrolling down by less than a screen keeps the block at the new top in place', () => {
+  const layout = new Layout(Array.from({ length: 20 }, () => 100));
+  const page = new PageWindow({ layout, viewport: 500 });
+  page.scrollTo(1000);
+  page.measure([[10, 100]]);
+  page.scrollTo(1300);
+  assert.deepEqual(page.anchor, { index: 13, offset: 0 });
+  page.measure([[12, 150]]);
+  assert.equal(page.scrollTop, 1350);
+  assert.equal(screenY(layout, 13, page.scrollTop), 0);
+});
+
+test('after a measurement the anchor moves to the block at the top', () => {
+  const layout = new Layout(Array.from({ length: 30 }, () => 100));
+  const page = new PageWindow({ layout, viewport: 500 });
+  page.scrollTo(1000);
+  page.measure([[10, 100]]);
+  page.scrollTo(850);
+  assert.deepEqual(page.anchor, { index: 10, offset: -150 });
+  page.measure([[8, 100], [9, 100]]);
+  assert.equal(page.scrollTop, 850);
+  assert.deepEqual(page.anchor, { index: 8, offset: 50 });
+  // Block 9 sits under the block at the top, so growing it moves nothing the reader sees.
+  assert.equal(page.measure([[9, 200]]), 850);
+});
+
+test('scrollTo clamps to the page in both directions', () => {
+  const layout = new Layout(Array.from({ length: 20 }, () => 100));
+  const page = new PageWindow({ layout, viewport: 500 });
+  assert.equal(page.scrollTo(-50), 0);
+  assert.equal(page.scrollTo(1e9), 1500);
+  assert.equal(page.scrollTop, 1500);
+  assert.equal(page.scrollTo(-1e9), 0);
+  assert.equal(page.scrollTop, 0);
+});
+
 test('scrollTop is clamped when the page gets shorter than the viewport allows', () => {
   const layout = new Layout([300, 300, 300]);
   const page = new PageWindow({ layout, viewport: 500 });
