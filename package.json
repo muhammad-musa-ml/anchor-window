@@ -1,0 +1,15 @@
+{
+  "name": "anchor-window",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Windowed rendering for long documentation pages that keeps deep links, reading position and find working.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test",
+    "bench": "node bench/run.mjs"
+  }
+}
