@@ -1,0 +1,89 @@
+{
+  "note": "Seeded: the first three tables repeat exactly; only the timings vary.",
+  "sessions": 200,
+  "blocks": 10000,
+  "readUpwards": {
+    "without": {
+      "maxJump": {
+        "min": 316,
+        "median": 481.5,
+        "max": 1065
+      },
+      "totalJump": {
+        "min": 11771,
+        "median": 13467,
+        "max": 15929
+      },
+      "framesWithJump": {
+        "min": 139,
+        "median": 157,
+        "max": 174
+      }
+    },
+    "with": {
+      "maxJump": {
+        "min": 0,
+        "median": 0,
+        "max": 0
+      },
+      "totalJump": {
+        "min": 0,
+        "median": 0,
+        "max": 0
+      },
+      "framesWithJump": {
+        "min": 0,
+        "median": 0,
+        "max": 0
+      }
+    }
+  },
+  "deepLink": {
+    "without": {
+      "error": {
+        "min": 2,
+        "median": 108.5,
+        "max": 728
+      },
+      "offTarget": 200,
+      "offScreen": 76
+    },
+    "with": {
+      "error": {
+        "min": 0,
+        "median": 0,
+        "max": 0
+      },
+      "offTarget": 0,
+      "offScreen": 0
+    }
+  },
+  "find": {
+    "whole": {
+      "token": 12464,
+      "webhook": 12453,
+      "refresh token": 489
+    },
+    "meanMounted": 12.1,
+    "share": {
+      "min": 0,
+      "median": 0.0011237310052163271,
+      "max": 0.0081799591002045
+    }
+  },
+  "layoutTime": {
+    "blocks": 100000,
+    "operations": 2000,
+    "runs": 7,
+    "fenwick": {
+      "min": 1.1719000000011874,
+      "median": 2.0495000000009895,
+      "max": 9.633499999999913
+    },
+    "naive": {
+      "min": 360.5733,
+      "median": 424.40529999999853,
+      "max": 506.60389999999825
+    }
+  }
+}
