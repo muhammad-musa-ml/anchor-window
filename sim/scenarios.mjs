@@ -15,8 +15,9 @@ function newPage(doc, options) {
 /**
  * Read upwards from the middle of the page, one wheel step per frame. After
  * each step the browser measures the blocks that just came into the window.
- * A jump is how far the block at the top of the viewport moved on screen
- * because of those measurements.
+ * The text the user was looking at should move by exactly the wheel step. A
+ * jump is how far the block that was at the top of the viewport before the
+ * step ends up from where that rule puts it.
  */
 export function readUpwards({ seed, n = 10000, frames = 300, anchoring }) {
   const doc = makeDoc(seed, n);
@@ -28,11 +29,13 @@ export function readUpwards({ seed, n = 10000, frames = 300, anchoring }) {
   let totalJump = 0;
   let framesWithJump = 0;
   for (let f = 0; f < frames; f++) {
-    page.scrollTo(page.scrollTop - intBetween(next, 40, 300));
-    const top = page.layout.indexAt(page.scrollTop);
-    const before = screenY(page, top);
+    const seen = page.layout.indexAt(page.scrollTop);
+    const seenY = screenY(page, seen);
+    const from = page.scrollTop;
+    page.scrollTo(from - intBetween(next, 40, 300));
+    const expected = seenY + (from - page.scrollTop);
     settle(page, doc.heights);
-    const jump = Math.abs(screenY(page, top) - before);
+    const jump = Math.abs(screenY(page, seen) - expected);
     maxJump = Math.max(maxJump, jump);
     totalJump += jump;
     if (jump > 1) framesWithJump++;

@@ -51,13 +51,34 @@ test('the anchor block itself growing keeps the viewport inside it', () => {
   assert.deepEqual(page.anchor, { index: 10, offset: 40 });
 });
 
-test('the anchor block shrinking below the offset moves the anchor to the next block', () => {
+test('the anchor block shrinking below the offset leaves the viewport where it was', () => {
   const layout = new Layout(Array.from({ length: 20 }, () => 100));
   const page = new PageWindow({ layout, viewport: 500 });
   page.scrollTo(1090);
-  page.measure([[10, 30]]);
-  assert.equal(page.anchor.index, 11);
-  assert.ok(page.anchor.offset >= 0 && page.anchor.offset < layout.height(11));
+  assert.equal(page.measure([[10, 30]]), 1090);
+  assert.equal(layout.indexAt(page.scrollTop), 11);
+});
+
+test('a user scroll keeps the measured anchor, so what the user saw moves by the scroll delta', () => {
+  const layout = new Layout(Array.from({ length: 30 }, () => 100));
+  const page = new PageWindow({ layout, viewport: 500 });
+  page.scrollTo(1000);
+  page.measure([[10, 100]]);
+  assert.equal(screenY(layout, 10, page.scrollTop), 0);
+  page.scrollTo(900);
+  assert.equal(page.anchor.index, 10);
+  assert.equal(screenY(layout, 10, page.scrollTop), 100);
+  page.measure([[8, 500], [9, 40]]);
+  assert.equal(screenY(layout, 10, page.scrollTop), 100);
+});
+
+test('an anchor that is no longer mounted is replaced by the block at the top', () => {
+  const layout = new Layout(Array.from({ length: 200 }, () => 100));
+  const page = new PageWindow({ layout, viewport: 500 });
+  page.scrollTo(1000);
+  page.measure([[10, 100]]);
+  page.scrollTo(15000);
+  assert.equal(page.anchor.index, 150);
 });
 
 test('scrollTop is clamped when the page gets shorter than the viewport allows', () => {

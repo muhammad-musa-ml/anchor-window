@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>anchor-window demo</title>
+    <style>
+      body { margin: 0; font: 14px/1.4 system-ui, sans-serif; background: #fff; color: #111; }
+      #bar { padding: 8px 12px; border-bottom: 1px solid #ccc; }
+      #root { padding: 0; }
+      .block { box-sizing: border-box; padding: 6px 12px; overflow: hidden; border-bottom: 1px solid #ddd; }
+      .block b { margin-right: 8px; }
+    </style>
+  </head>
+  <body>
+    <div id="bar">anchor-window demo: <span id="status">loading</span></div>
+    <div id="root"></div>
+    <script type="module" src="./dist/main.js"></script>
+  </body>
+</html>

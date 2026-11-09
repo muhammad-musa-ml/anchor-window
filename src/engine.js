@@ -6,6 +6,11 @@ import { spacers, visibleRange } from './window.js';
 // Both return the scrollTop the page should be set to.
 //
 // ids[i] is the anchor id of block i (a heading id) or a falsy value.
+//
+// The anchor is a block that has been measured and is still mounted, and the
+// distance from its top to the top of the viewport. A user scroll only changes
+// that distance, so the blocks the user saw keep moving by exactly the scroll
+// delta whatever the blocks that scroll into view turn out to measure.
 
 export class PageWindow {
   constructor({ layout, viewport, overscan = 3, anchoring = true, ids = [] }) {
@@ -37,8 +42,17 @@ export class PageWindow {
   scrollTo(y) {
     const next = this.clamp(y);
     if (Math.abs(next - this.scrollTop) < 1) return this.scrollTop;
+    // The block at the top of the last settled state is mounted, so it has
+    // been measured. Anchoring on it keeps everything the user was looking at
+    // rigid; anchoring on the block at the new top could pick one that has
+    // never been measured. A scroll of more than a screen shares no content
+    // with the old one, so it takes the block at the new top.
+    const seen = this.layout.indexAt(this.scrollTop);
+    const near = Math.abs(next - this.scrollTop) <= this.viewport && this.layout.isMeasured(seen);
+    this.anchor = near
+      ? { index: seen, offset: next - this.layout.offsetOf(seen) }
+      : captureAnchor(this.layout, next);
     this.scrollTop = next;
-    this.anchor = captureAnchor(this.layout, this.scrollTop);
     this.pinned = false;
     return this.scrollTop;
   }
@@ -67,9 +81,17 @@ export class PageWindow {
   /** The browser measured blocks: entries are [index, height] pairs. */
   measure(entries) {
     for (const [index, height] of entries) this.layout.setHeight(index, height);
-    if (this.anchoring) this.scrollTop = scrollTopFor(this.layout, this.anchor);
-    this.scrollTop = this.clamp(this.scrollTop);
-    if (!this.pinned) this.anchor = captureAnchor(this.layout, this.scrollTop);
+    if (!this.anchoring) {
+      this.scrollTop = this.clamp(this.scrollTop);
+      this.anchor = captureAnchor(this.layout, this.scrollTop);
+      return this.scrollTop;
+    }
+    const wanted = scrollTopFor(this.layout, this.anchor);
+    this.scrollTop = this.clamp(wanted);
+    if (this.scrollTop !== wanted) {
+      this.anchor = captureAnchor(this.layout, this.scrollTop);
+      this.pinned = false;
+    }
     return this.scrollTop;
   }
 

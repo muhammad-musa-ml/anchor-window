@@ -2,8 +2,8 @@ Page of 10000 blocks, 200 seeded sessions. Each cell is median (min to max).
 
 | Reading upwards, 300 wheel steps | no correction | with anchoring |
 | --- | --- | --- |
-| largest single jump, px | 481.5 (316.0 to 1065.0) | 0.0 (0.0 to 0.0) |
-| total jump over the session, px | 13467 (11771 to 15929) | 0.0 (0.0 to 0.0) |
+| largest single jump, px | 489.5 (316.0 to 1065.0) | 0.0 (0.0 to 0.0) |
+| total jump over the session, px | 13599 (11565 to 15987) | 0.0 (0.0 to 0.0) |
 | steps with a jump over 1 px, of 300 | 157 (139 to 174) | 0 (0 to 0) |
 
 | Deep link to a random heading, 72 px below the top | no pin | pinned |
@@ -16,4 +16,4 @@ Find: the browser's own find, at a random scroll position with about 12.1 blocks
 
 | Layout cost, 2000 operations on 100000 blocks, 7 runs, ms | prefix loop | Fenwick tree |
 | --- | --- | --- |
-| median (min to max) | 424.4 (360.6 to 506.6) | 2.05 (1.17 to 9.63) |
+| median (min to max) | 3603.6 (3086.7 to 4661.3) | 17.42 (1.98 to 28.70) |
