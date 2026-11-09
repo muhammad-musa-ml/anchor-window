@@ -52,6 +52,12 @@ export class PageWindow {
   scrollToId(id, margin = 0) {
     const index = this.indexById.get(id);
     if (index === undefined) return null;
+    return this.scrollToBlock(index, margin);
+  }
+
+  /** Same as scrollToId, for a block index (a find result, say). */
+  scrollToBlock(index, margin = 0) {
+    if (!(index >= 0 && index < this.layout.n)) return null;
     this.scrollTop = this.clamp(this.layout.offsetOf(index) - margin);
     this.anchor = { index, offset: -margin };
     this.pinned = true;
