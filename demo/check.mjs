@@ -1,8 +1,10 @@
 // Two checks of the demo in headless Chrome: a link with a heading id in the
-// address lands on that heading, and page-wide find jumps to a match that was
-// not mounted. It also counts what the browser's own find would see in the
-// mounted text. Writes results/check.md; exits 1 on a failure. Needs
-// `npm run build:demo` first.
+// address lands on that heading, and pressing next in the page-wide find 100
+// times ends on a match more than 1,000 blocks from the start and lands that
+// block at the top of the page. It also counts what the browser's own find
+// would see in the mounted text and fails if that is 5% or more of the
+// matches. Writes results/check.md, with the browser version; exits 1 on a
+// failure. Needs `npm run build:demo` first.
 import assert from 'node:assert/strict';
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -70,8 +72,9 @@ try {
   assert.ok(inDom * 20 < everywhere, `${inDom} of ${everywhere} matches are in the document text`);
   console.log(`"refresh token" in document.body.innerText: ${inDom} of ${everywhere}`);
 
+  const version = await browser.version();
   const report = [
-    `Headless Chrome, demo page of ${doc.texts.length} blocks, engine mode (npm run check:demo).`,
+    `Headless ${version}, demo page of ${doc.texts.length} blocks, engine mode (npm run check:demo).`,
     '',
     `- Link to #${doc.ids[target]}: the heading is ${offset} px from the top of the page.`,
     `- Page-wide find for "refresh token": ${found.status}; pressing next 100 times (one block per press) lands on block ${block}, ${where} px from the top, with ${found.mounted} blocks mounted.`,

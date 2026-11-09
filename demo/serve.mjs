@@ -1,6 +1,9 @@
 // A static server for the demo, on localhost only. A POST to /save/<name>
-// writes the body to results/browser/<name>.json. demo/measure.mjs writes its
-// results itself and does not use it.
+// writes the body to results/browser/<name>.json; window.demo.save in
+// demo/main.js posts to it, and no script in this repository calls
+// window.demo.save.
+// demo/measure.mjs and demo/check.mjs import this file to serve the page and
+// write their results themselves.
 import { createServer } from 'node:http';
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { extname, join, resolve } from 'node:path';

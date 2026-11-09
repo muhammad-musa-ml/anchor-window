@@ -1,4 +1,4 @@
-Headless Chrome, demo page of 10000 blocks, engine mode (npm run check:demo).
+Headless Chrome/156.0.8078.80, demo page of 10000 blocks, engine mode (npm run check:demo).
 
 - Link to #h-4003: the heading is 0 px from the top of the page.
 - Page-wide find for "refresh token": 489 matches in 478 blocks, at block 2109; pressing next 100 times (one block per press) lands on block 2109, 0 px from the top, with 12 blocks mounted.

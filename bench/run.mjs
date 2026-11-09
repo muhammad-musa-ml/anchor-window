@@ -98,7 +98,7 @@ function timeLayouts() {
 }
 
 const results = {
-  note: 'Seeded: the first three tables repeat exactly; only the timings vary.',
+  note: 'Seeded: the reading, deep link and find numbers repeat exactly; only the layout timings vary.',
   sessions: SESSIONS,
   blocks: BLOCKS,
   readUpwards: runReadUpwards(),

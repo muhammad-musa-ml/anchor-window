@@ -13,7 +13,8 @@ import { spacers, visibleRange } from './window.js';
 // before if that has been measured; otherwise the estimate at the new top.
 // After a measurement the window sets scrollTop so that distance is unchanged,
 // which keeps the text where it was whatever the blocks above it turn out to
-// measure.
+// measure, except where scrollTop is clamped at the start or the end of the
+// page.
 
 export class PageWindow {
   constructor({ layout, viewport, overscan = 3, anchoring = true, ids = [] }) {
@@ -46,8 +47,9 @@ export class PageWindow {
   }
 
   /**
-   * The user scrolled to y. A value within a pixel of the current scrollTop is
-   * the echo of a scroll we set ourselves and changes nothing.
+   * The user scrolled to y. A change of less than a pixel is taken to be the
+   * echo of a scroll we set ourselves and changes nothing; a real scroll that
+   * small is dropped too.
    */
   scrollTo(y) {
     const next = this.clamp(y);
