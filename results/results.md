@@ -16,4 +16,4 @@ Find: the browser's own find, at a random scroll position with about 12.1 blocks
 
 | Layout cost, 2000 operations on 100000 blocks, 7 runs, ms | prefix loop | Fenwick tree |
 | --- | --- | --- |
-| median (min to max) | 3603.6 (3086.7 to 4661.3) | 17.42 (1.98 to 28.70) |
+| median (min to max) | 559.0 (452.2 to 645.0) | 1.80 (1.57 to 5.30) |

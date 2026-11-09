@@ -170,7 +170,11 @@ window.demo = { mode, ref, frames, scroller, mountedCount, runAll, save, readUpw
 render(doc.estimates);
 wireFind();
 setStatus(`${mode} mode, ${N} blocks`);
-requestAnimationFrame(() => {
-  const id = decodeURIComponent(location.hash.slice(1));
-  if (id) ref.current?.scrollToId(id, 0);
-});
+// The first render is asynchronous, so wait until the page exists before
+// following a link such as demo/index.html#h-4003.
+const hashId = decodeURIComponent(location.hash.slice(1));
+const followHash = (attemptsLeft) => {
+  if (ref.current) ref.current.scrollToId(hashId, 0);
+  else if (attemptsLeft > 0) requestAnimationFrame(() => followHash(attemptsLeft - 1));
+};
+if (hashId) followHash(60);
